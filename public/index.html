@@ -1,0 +1,83 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot Example</title>
+</head>
+<body>
+    <div id="chat">
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Type your message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        
+        // Establish a WebSocket connection
+        const socket = new WebSocket('ws://localhost:3000');
+        
+        // Listen for WebSocket messages
+        socket.addEventListener('message', function(event) {
+            appendMessage('Bot', event.data);
+        });
+
+        function appendMessage(sender, text) {
+            const message = document.createElement('div');
+            message.textContent = `${sender}: ${text}`;
+            messagesDiv.appendChild(message);
+        }
+
+        function sendMessage() {
+            const userText = userInput.value;
+            appendMessage('You', userText);
+            socket.send(userText);
+            userInput.value = '';
+        }
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Chatbot</title>
+</head>
+<body>
+    <div id="chat">
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Type your message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const socket = io();
+
+        // Prompt the sender for their name and mobile
+        const sender = prompt('Enter your name:');
+        const mobile = prompt('Enter your mobile number:');
+
+        // Send the sender's information to the server
+        socket.emit('join', { sender, mobile });
+
+        // Listen for incoming messages
+        socket.on('message', (data) => {
+            appendMessage(data.sender, data.text);
+        });
+
+        function appendMessage(sender, text) {
+            const message = document.createElement('div');
+            message.textContent = `${sender}: ${text}`;
+            messagesDiv.appendChild(message);
+        }
+
+        function sendMessage() {
+            const userText = userInput.value;
+            socket.emit('message', { sender, text: userText });
+            userInput.value = '';
+        }
+    </script>
+</body>
+</html>
+
